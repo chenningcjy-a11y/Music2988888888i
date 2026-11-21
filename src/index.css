@@ -1,0 +1,545 @@
+@import "tailwindcss";
+
+:root {
+  --font-calligraphy: "Ma Shan Zheng", "Zhi Mang Xing", "STKaiti", "KaiTi", "Kaiti SC",
+    "DFKai-SB", "BiauKai", "AR PL UKai CN", "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-subtitle: "Noto Serif SC", "Songti SC", "STSong", "STKaiti", "KaiTi",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8eef2;
+}
+
+/* Main poetic canvas */
+.poetic-stage {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 5vw, 4rem);
+  background:
+    radial-gradient(circle at 20% 22%, rgba(248, 224, 232, 0.82) 0%, transparent 52%),
+    radial-gradient(circle at 82% 76%, rgba(230, 221, 239, 0.8) 0%, transparent 54%),
+    radial-gradient(circle at 50% 48%, rgba(254, 250, 247, 0.92) 0%, transparent 62%),
+    linear-gradient(135deg, #f9eef2 0%, #fcf8f5 38%, #f3ecf4 72%, #ebe4f0 100%);
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Soft opening illumination veil */
+.stage-veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(247, 235, 240, 0.72), rgba(232, 222, 236, 0.92));
+  pointer-events: none;
+  z-index: 20;
+  animation: veilLift 1.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity;
+}
+
+@keyframes veilLift {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Slow ambient dreamy glow layers */
+.ambient-layer {
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  will-change: transform, opacity;
+}
+
+.ambient-orb--rose {
+  width: clamp(260px, 48vw, 680px);
+  height: clamp(260px, 48vw, 680px);
+  top: 6%;
+  left: 8%;
+  background: radial-gradient(circle, rgba(244, 206, 219, 0.46) 0%, rgba(244, 206, 219, 0.14) 48%, transparent 74%);
+  animation: orbDriftA 18s ease-in-out infinite alternate;
+}
+
+.ambient-orb--lavender {
+  width: clamp(280px, 52vw, 720px);
+  height: clamp(280px, 52vw, 720px);
+  bottom: 4%;
+  right: 6%;
+  background: radial-gradient(circle, rgba(215, 201, 231, 0.44) 0%, rgba(215, 201, 231, 0.12) 50%, transparent 76%);
+  animation: orbDriftB 22s ease-in-out infinite alternate;
+}
+
+.ambient-orb--cream {
+  width: clamp(300px, 58vw, 820px);
+  height: clamp(220px, 38vw, 480px);
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(ellipse at center, rgba(255, 250, 246, 0.82) 0%, rgba(252, 242, 244, 0.36) 52%, transparent 76%);
+  animation: centerMistBreathe 9s ease-in-out infinite;
+}
+
+@keyframes orbDriftA {
+  0% {
+    transform: translate3d(-3%, -2%, 0) scale(0.96);
+    opacity: 0.72;
+  }
+  50% {
+    transform: translate3d(4%, 3%, 0) scale(1.06);
+    opacity: 0.94;
+  }
+  100% {
+    transform: translate3d(-1%, 5%, 0) scale(1);
+    opacity: 0.78;
+  }
+}
+
+@keyframes orbDriftB {
+  0% {
+    transform: translate3d(3%, 2%, 0) scale(1.04);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate3d(-4%, -3%, 0) scale(0.95);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translate3d(2%, -5%, 0) scale(1.02);
+    opacity: 0.76;
+  }
+}
+
+@keyframes centerMistBreathe {
+  0%,
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(0.97);
+    opacity: 0.78;
+  }
+  50% {
+    transform: translate3d(-50%, -50%, 0) scale(1.05);
+    opacity: 0.98;
+  }
+}
+
+/* Particle layer (behind core typography) */
+.particles-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.particle-item {
+  position: absolute;
+  bottom: -10vh;
+  left: var(--start-x, 50%);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: particleFloatUp var(--duration, 20s) linear var(--delay, 0s) infinite;
+}
+
+.particle-sway {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  animation: particleSway var(--sway-duration, 6s) ease-in-out var(--sway-delay, 0s) infinite alternate;
+}
+
+.particle-dot {
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 250, 246, 0.95) 0%,
+    rgba(235, 206, 218, 0.58) 52%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px rgba(242, 214, 224, 0.45);
+}
+
+@keyframes particleFloatUp {
+  0% {
+    transform: translate3d(0, 0, 0) scale(var(--scale-start, 0.85));
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--max-opacity, 0.32);
+  }
+  82% {
+    opacity: var(--max-opacity, 0.32);
+  }
+  100% {
+    transform: translate3d(var(--drift-x, 24px), -122vh, 0) scale(var(--scale-end, 1.05));
+    opacity: 0;
+  }
+}
+
+@keyframes particleSway {
+  0% {
+    transform: translate3d(calc(var(--sway-x, 12px) * -1), 0, 0) rotate(calc(var(--rot, 14deg) * -1));
+  }
+  100% {
+    transform: translate3d(var(--sway-x, 12px), 0, 0) rotate(var(--rot, 14deg));
+  }
+}
+
+/* Center composition */
+.centerpiece {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  max-width: 1120px;
+  padding: clamp(1rem, 3vw, 2.5rem);
+}
+
+/* Soft back halo behind the calligraphy */
+.calligraphy-aura {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: min(86vw, 760px);
+  height: clamp(90px, 18vw, 180px);
+  transform: translate3d(-50%, -50%, 0);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(244, 219, 228, 0.44) 0%,
+    rgba(227, 210, 234, 0.22) 48%,
+    transparent 74%
+  );
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation:
+    auraAppear 1.8s ease-out 0.65s forwards,
+    auraPulse 7s ease-in-out 2.5s infinite;
+}
+
+@keyframes auraAppear {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.86);
+  }
+  100% {
+    opacity: 0.85;
+    transform: translate3d(-50%, -50%, 0) scale(1);
+  }
+}
+
+@keyframes auraPulse {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: translate3d(-50%, -50%, 0) scale(0.98);
+  }
+  50% {
+    opacity: 0.98;
+    transform: translate3d(-50%, -50%, 0) scale(1.04);
+  }
+}
+
+/* Whole-sentence gentle breathing motion */
+.sentence-breathe {
+  position: relative;
+  margin: 0;
+  will-change: transform;
+  animation: sentenceFloat 7.2s ease-in-out 2.4s infinite;
+}
+
+@keyframes sentenceFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0px, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+.calligraphy-heading {
+  margin: 0;
+  font-family: var(--font-calligraphy);
+  font-weight: 400;
+  font-size: clamp(1.95rem, 4.7vw, 4.15rem);
+  line-height: 1.55;
+  letter-spacing: 0.08em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: 0.04em;
+  row-gap: 0.25em;
+  filter:
+    drop-shadow(0 3px 12px rgba(173, 126, 146, 0.18))
+    drop-shadow(0 0 22px rgba(224, 188, 202, 0.28));
+}
+
+.calligraphy-clause {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  justify-content: center;
+}
+
+/* Character-by-character floating drift wrapper */
+.char-drift {
+  display: inline-block;
+  will-change: transform;
+  animation: charMicroWave 5.8s ease-in-out calc(2.1s + var(--i) * 0.24s) infinite;
+}
+
+@keyframes charMicroWave {
+  0%,
+  100% {
+    transform: translate3d(0, 0px, 0);
+  }
+  50% {
+    transform: translate3d(0, -2.5px, 0);
+  }
+}
+
+/* Individual calligraphy glyph with reveal + flowing shimmer */
+.char-glyph {
+  display: inline-block;
+  padding: 0.14em 0.05em;
+  margin: -0.1em -0.035em;
+  background-image: linear-gradient(
+    112deg,
+    #7a6285 0%,
+    #9c7187 22%,
+    #bc8782 38%,
+    #e5c5ba 46.5%,
+    #f6e5de 50%,
+    #e5c5ba 53.5%,
+    #b47f8a 64%,
+    #8d6b8e 82%,
+    #7a6285 100%
+  );
+  background-size: 260% 100%;
+  background-position: 130% 50%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  will-change: transform, opacity, filter;
+  animation:
+    charReveal 1.15s cubic-bezier(0.22, 1, 0.36, 1) calc(0.6s + var(--i) * 0.14s) both,
+    textShimmer 9.5s linear calc(var(--i) * -0.22s) infinite;
+}
+
+.char-glyph--punct {
+  padding-right: 0;
+  margin-right: -0.06em;
+}
+
+@keyframes charReveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0) scale(0.92);
+    filter: blur(4px);
+  }
+  65% {
+    opacity: 0.96;
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@keyframes textShimmer {
+  0% {
+    background-position: 130% 50%;
+  }
+  100% {
+    background-position: -130% 50%;
+  }
+}
+
+/* Delicate gradient divider line */
+.poetic-divider {
+  width: min(260px, 56vw);
+  height: 1px;
+  margin-top: clamp(1.25rem, 3vw, 2.2rem);
+  margin-bottom: clamp(1rem, 2.4vw, 1.65rem);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(168, 128, 146, 0.36) 24%,
+    rgba(198, 154, 148, 0.62) 50%,
+    rgba(168, 128, 146, 0.36) 76%,
+    transparent 100%
+  );
+  transform-origin: center;
+  will-change: transform, opacity;
+  animation:
+    dividerReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 2.55s both,
+    dividerBreathe 7.2s ease-in-out 3.8s infinite;
+}
+
+@keyframes dividerReveal {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes dividerBreathe {
+  0%,
+  100% {
+    opacity: 0.72;
+    transform: scaleX(0.96);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.03);
+  }
+}
+
+/* Subtle poetic subtitle */
+.poetic-subtitle {
+  margin: 0;
+  font-family: var(--font-subtitle);
+  font-weight: 300;
+  font-size: clamp(0.84rem, 1.45vw, 1.04rem);
+  line-height: 1.8;
+  letter-spacing: 0.38em;
+  padding-left: 0.38em;
+  color: rgba(116, 91, 114, 0.62);
+  will-change: transform, opacity;
+  animation:
+    subtitleReveal 1.3s cubic-bezier(0.22, 1, 0.36, 1) 2.95s both,
+    subtitleBreathe 7.2s ease-in-out 4.3s infinite;
+}
+
+@keyframes subtitleReveal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  100% {
+    opacity: 0.66;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes subtitleBreathe {
+  0%,
+  100% {
+    opacity: 0.56;
+    transform: translate3d(0, 0px, 0);
+  }
+  50% {
+    opacity: 0.76;
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Responsive tuning for Android tablets & phones */
+@media (max-width: 767px) {
+  .calligraphy-heading {
+    font-size: clamp(1.75rem, 7.6vw, 2.55rem);
+    letter-spacing: 0.06em;
+    line-height: 1.65;
+  }
+
+  .char-glyph--punct {
+    margin-right: 0;
+  }
+
+  .poetic-subtitle {
+    font-size: clamp(0.78rem, 3.2vw, 0.94rem);
+    letter-spacing: 0.3em;
+    padding-left: 0.3em;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1180px) {
+  .calligraphy-heading {
+    font-size: clamp(2.35rem, 4.5vw, 3.35rem);
+  }
+}
+
+/* Accessibility: Reduced motion fallback */
+@media (prefers-reduced-motion: reduce) {
+  .stage-veil {
+    display: none;
+  }
+
+  .ambient-orb,
+  .sentence-breathe,
+  .char-drift,
+  .char-glyph,
+  .poetic-divider,
+  .poetic-subtitle,
+  .calligraphy-aura,
+  .particle-item,
+  .particle-sway {
+    animation: none !important;
+  }
+
+  .char-glyph {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    background-position: 50% 50%;
+  }
+
+  .poetic-divider {
+    opacity: 0.85;
+    transform: scaleX(1);
+  }
+
+  .poetic-subtitle {
+    opacity: 0.68;
+    transform: none;
+  }
+
+  .calligraphy-aura {
+    opacity: 0.8;
+  }
+
+  .particle-item {
+    display: none;
+  }
+}

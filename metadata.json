@@ -1,0 +1,6 @@
+{
+  "name": "能遇见就是缘",
+  "description": "「能遇见就是缘，哪怕就匆匆一眼」— 唯美动态中文书法艺术展示网页",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
